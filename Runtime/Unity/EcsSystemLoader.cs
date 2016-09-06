@@ -15,6 +15,7 @@ namespace uFrame.ECS.UnityUtilities
    
         private ISystemUpdate[] _items;
         private ISystemFixedUpdate[] _itemsFixed;
+        private ISystemLateUpdate[] _itemsLate;
 
         public override void Load()
         {
@@ -53,6 +54,23 @@ namespace uFrame.ECS.UnityUtilities
                 {
                     var item = _itemsFixed[index];
                     item.SystemFixedUpdate();
+                }
+            }
+        }
+
+        public void LateUpdate()
+        {
+            if (uFrameKernel.IsKernelLoaded)
+            {
+                if (_itemsLate == null)
+                {
+                    _itemsLate = uFrameKernel.Instance.Services.OfType<ISystemLateUpdate>().ToArray();
+                }
+
+                for (int index = 0; index < _itemsLate.Length; index++)
+                {
+                    var item = _itemsLate[index];
+                    item.SystemLateUpdate();
                 }
             }
         }
